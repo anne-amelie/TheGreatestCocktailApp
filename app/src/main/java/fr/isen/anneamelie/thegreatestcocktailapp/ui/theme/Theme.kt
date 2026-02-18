@@ -1,4 +1,4 @@
-package fr.isen.anneamelie.thegreatestcocktailapp.ui.theme
+package fr.isen.anneamelie.thegreatestcocktailapp
 
 import android.app.Activity
 import android.os.Build
@@ -36,7 +36,8 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun TheGreatestCocktailAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

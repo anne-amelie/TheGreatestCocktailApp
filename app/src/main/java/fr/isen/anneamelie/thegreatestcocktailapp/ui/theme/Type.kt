@@ -1,4 +1,4 @@
-package fr.isen.anneamelie.thegreatestcocktailapp.ui.theme
+package fr.isen.anneamelie.thegreatestcocktailapp
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
