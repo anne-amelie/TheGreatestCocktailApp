@@ -1,4 +1,4 @@
-package fr.isen.anneamelie.thegreatestcocktailapp
+package fr.isen.anneamelie.thegreatestcocktailapp.ui.theme
 
 import android.app.Activity
 import android.os.Build

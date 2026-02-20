@@ -1,6 +1,7 @@
 package fr.isen.anneamelie.thegreatestcocktailapp
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,7 +38,6 @@ import fr.isen.anneamelie.thegreatestcocktailapp.screens.DetailCocktailScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.FavoritesScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.ui.theme.TheGreatestCocktailAppTheme
 
-
 data class TabBarItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Log.d("LifeCycle", "MainActivity onCreate")
         setContent {
             val context = LocalContext.current
             val navController = rememberNavController()
@@ -108,20 +109,29 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Row(modifier = modifier) { // Horizontal Alignment
-        Text("Hello $name!")
-        Text("Hello Isen")
+    override fun onPause(){
+        super.onPause()
+        Log.d("LifeCycle", "MainActivity onPause")
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TheGreatestCocktailAppTheme {
-        Greeting("Android")
+    override fun onResume(){
+        super.onResume()
+        Log.d("LifeCycle", "MainActivity onResume")
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d("LifeCycle", "MainActivity onStop")
+    }
+
+    override fun onStart(){
+        super.onStart()
+        Log.d("LifeCycle", "MainActivity onStart")
+    }
+
+    override fun onRestart(){
+        super.onRestart()
+        Log.d("LifeCycle", "MainActivity onRestart")
     }
 }

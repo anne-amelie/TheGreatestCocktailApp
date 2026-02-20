@@ -51,7 +51,7 @@ fun DetailCocktailScreen(modifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Image(
-                painterResource(R.drawable.cocktail),
+                painterResource(R.drawable.cocktail_bird),
                 "",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
@@ -116,7 +116,7 @@ fun DetailCocktailScreen(modifier: Modifier) {
                     Text(stringResource(R.string.preparation),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold)
-                    Text("Take a glass, pourthe coke in the glass, then you take 7 drops of lemon juice")
+                    Text("Take a glass, pour the coke in the glass, then you take 7 drops of lemon juice")
                 }
             }
         }
