@@ -18,11 +18,14 @@ class DrinksActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Log.d("LifeCycle", "DrinksActivity onCreate")
+
+        val categoryID = intent.getStringExtra(CATEGORY) ?: ""
+
         setContent {
             val context = LocalContext.current
             TheGreatestCocktailAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    DrinksScreen(Modifier.padding(innerPadding))
+                    DrinksScreen(Modifier.padding(innerPadding), categoryID)
                 }
             }
         }
@@ -55,5 +58,9 @@ class DrinksActivity : ComponentActivity() {
     override fun onRestart(){
         super.onRestart()
         Log.d("LifeCycle", "DrinksActivity onRestart")
+    }
+
+    companion object {
+        const val CATEGORY = "category"
     }
 }
