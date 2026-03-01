@@ -24,6 +24,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -32,11 +34,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import fr.isen.anneamelie.thegreatestcocktailapp.dataClasses.CocktailResponse
+import fr.isen.anneamelie.thegreatestcocktailapp.models.AppBarState
+import fr.isen.anneamelie.thegreatestcocktailapp.network.ApiClient
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.BottomAppBar
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.CategoriesScreen
-import fr.isen.anneamelie.thegreatestcocktailapp.screens.DetailCocktailScreen
+import fr.isen.anneamelie.thegreatestcocktailapp.screens.RandomCocktailScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.FavoritesScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.ui.theme.TheGreatestCocktailAppTheme
+import retrofit2.Call
+import retrofit2.Response
 
 data class TabBarItem(
     val title: String,
@@ -48,10 +55,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         Log.d("LifeCycle", "MainActivity onCreate")
         setContent {
             val context = LocalContext.current
             val navController = rememberNavController()
+
+            val appBarState = remember { mutableStateOf(AppBarState()) }
 
             val randomItem = TabBarItem(
                 stringResource(R.string.tab_item_random),
@@ -75,34 +85,34 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar({
-                            Text("Detail")
+                            Text(appBarState.value.title)
                         }, actions = {
-                            IconButton({
-                                Toast
-                                    .makeText(context, "Add to favorite", Toast.LENGTH_LONG)
-                                    .show()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Filled.FavoriteBorder,
-                                    contentDescription = "Localized description"
-                                )
-                            }
+                            appBarState.value.actions?.invoke(this)
                         })
                     },
                     bottomBar = { BottomAppBar(tabItems, navController) }
                 ) { innerPadding ->
                     NavHost(navController, startDestination = randomItem.title) {
                         composable(randomItem.title) {
-                            DetailCocktailScreen(
-                                Modifier.padding(innerPadding))
+                            RandomCocktailScreen(
+                                Modifier.padding(innerPadding),
+                                { topBar ->
+                                    appBarState.value = topBar
+                                })
                         }
                         composable(categoryItem.title) {
                             CategoriesScreen(
-                                Modifier.padding(innerPadding))
+                                Modifier.padding(innerPadding),
+                                { topBar ->
+                                    appBarState.value = topBar
+                                })
                         }
                         composable(favoriteItem.title) {
                             FavoritesScreen(
-                                Modifier.padding(innerPadding))
+                                Modifier.padding(innerPadding),
+                                { topBar ->
+                                    appBarState.value = topBar
+                                })
                         }
                     }
                 }
