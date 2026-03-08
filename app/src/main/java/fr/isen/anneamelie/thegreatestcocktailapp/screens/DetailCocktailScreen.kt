@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -111,7 +112,11 @@ fun DetailCocktailScreen(drinkId: String,
         onComposing (
             AppBarState(
                 title = "Cocktail Detail",
-                actions = { DetailCocktailTopButton(drink.value) },
+                actions = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        DetailCocktailTopButton(drink.value)
+                    }
+                },
                 onBackClick = { (context as? Activity)?.finish() }
             )
         )
@@ -126,7 +131,11 @@ fun DetailCocktailScreen(drinkId: String,
                     onComposing(
                         AppBarState(
                             title = it.strDrink ?: "Cocktail Detail",
-                            actions = { DetailCocktailTopButton(drink.value) },
+                            actions = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    DetailCocktailTopButton(drink.value)
+                                }
+                            },
                             onBackClick = { (context as? Activity)?.finish() }
                         )
                     )
@@ -186,16 +195,19 @@ fun DetailCocktailScreen(contentPadding: PaddingValues, drink: Drink) {
             Text(drink.strDrink ?: "",
                 fontSize = 40.sp,
                 color = colorResource(R.color.white),
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold,
+                lineHeight = 48.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp))
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                CategoryView(Category.OTHER)
-                CategoryView(Category.NON_ALCOHOLIC)
+                drink.strCategory?.let { CategoryView(Category.fromString(it)) }
+                drink.strAlcoholic?.let { CategoryView(Category.fromString(it)) }
             }
             Text(
-                "Cocktail glass",
+                drink.strGlass ?: "Cocktail glass",
                 color = colorResource(R.color.grey)
             )
             Card(
@@ -209,7 +221,9 @@ fun DetailCocktailScreen(contentPadding: PaddingValues, drink: Drink) {
                         fontSize = 20.sp,
                         color = Color.White,
                         fontWeight = FontWeight.Bold)
-                    Text("Coca-cola", color = Color.White)
+                    drink.ingredientList().forEach { (ingredient, measure) ->
+                        Text("$measure $ingredient".trim(), color = Color.White)
+                    }
                 }
             }
             Card(
@@ -302,9 +316,9 @@ fun CategoryView(catogory: Category) {
     ) {
         Text(
             Category.toString(catogory),
-            fontSize = 20.sp,
+            fontSize = 14.sp,
             color = colorResource(R.color.white),
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
         )
     }
 }

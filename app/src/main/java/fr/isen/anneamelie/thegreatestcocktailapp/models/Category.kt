@@ -36,6 +36,26 @@ enum class Category {
                 OTHER
             )
         }
+        fun fromString(value: String?): Category {
+            return when (value) {
+                "Ordinary Drink" -> DRINK
+                "Cocktail" -> COCKTAIL
+                "Shake" -> SHAKE
+                "Other / Unknown" -> OTHER
+                "Cocoa" -> COCOA
+                "Shot" -> SHOT
+                "Coffee / Tea" -> COFFE
+                "Homemade Liquor" -> LIQUOR
+                "Punch / Party Drink" -> PUNCH
+                "Beer" -> BEER
+                "Soft Drink" -> SOFT
+                "Alcoholic" -> ALCOHOLIC
+                "Non alcoholic" -> NON_ALCOHOLIC
+                "Non Alcoholic" -> NON_ALCOHOLIC
+                "Optional alcohol" -> OTHER
+                else -> OTHER
+            }
+        }
         fun toString(category: Category): String {
             return when(category) {
                 ALCOHOLIC -> "Alcoholic"
