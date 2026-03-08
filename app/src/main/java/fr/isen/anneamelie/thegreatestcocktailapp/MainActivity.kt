@@ -2,16 +2,14 @@ package fr.isen.anneamelie.thegreatestcocktailapp
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Favorite
@@ -21,29 +19,24 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import fr.isen.anneamelie.thegreatestcocktailapp.dataClasses.CocktailResponse
 import fr.isen.anneamelie.thegreatestcocktailapp.models.AppBarState
-import fr.isen.anneamelie.thegreatestcocktailapp.network.ApiClient
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.BottomAppBar
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.CategoriesScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.RandomCocktailScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.screens.FavoritesScreen
+import fr.isen.anneamelie.thegreatestcocktailapp.screens.SearchScreen
 import fr.isen.anneamelie.thegreatestcocktailapp.ui.theme.TheGreatestCocktailAppTheme
-import retrofit2.Call
-import retrofit2.Response
 
 data class TabBarItem(
     val title: String,
@@ -58,9 +51,7 @@ class MainActivity : ComponentActivity() {
 
         Log.d("LifeCycle", "MainActivity onCreate")
         setContent {
-            val context = LocalContext.current
             val navController = rememberNavController()
-
             val appBarState = remember { mutableStateOf(AppBarState()) }
 
             val randomItem = TabBarItem(
@@ -80,68 +71,62 @@ class MainActivity : ComponentActivity() {
             )
             val tabItems = listOf(randomItem, categoryItem, favoriteItem)
 
-
             TheGreatestCocktailAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(),
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        TopAppBar({
-                            Text(appBarState.value.title)
-                        }, actions = {
-                            appBarState.value.actions?.invoke(this)
-                        })
+                        TopAppBar(
+                            title = { },
+                            navigationIcon = {
+                                appBarState.value.onBackClick?.let {
+                                    IconButton(onClick = it) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+                            },
+                            actions = { appBarState.value.actions?.invoke(this) },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color.Transparent
+                            )
+                        )
                     },
                     bottomBar = { BottomAppBar(tabItems, navController) }
                 ) { innerPadding ->
-                    NavHost(navController, startDestination = randomItem.title) {
-                        composable(randomItem.title) {
-                            RandomCocktailScreen(
-                                Modifier.padding(innerPadding),
-                                { topBar ->
-                                    appBarState.value = topBar
-                                })
-                        }
-                        composable(categoryItem.title) {
-                            CategoriesScreen(
-                                Modifier.padding(innerPadding),
-                                { topBar ->
-                                    appBarState.value = topBar
-                                })
-                        }
-                        composable(favoriteItem.title) {
-                            FavoritesScreen(
-                                Modifier.padding(innerPadding),
-                                { topBar ->
-                                    appBarState.value = topBar
-                                })
+                    // Do not apply innerPadding to the container to allow content to go behind transparent bars
+                    Box(Modifier.fillMaxSize()) {
+                        NavHost(navController, startDestination = randomItem.title) {
+                            composable(randomItem.title) {
+                                RandomCocktailScreen(
+                                    contentPadding = innerPadding,
+                                    onComposing = { topBar -> appBarState.value = topBar }
+                                )
+                            }
+                            composable(categoryItem.title) {
+                                CategoriesScreen(
+                                    contentPadding = innerPadding,
+                                    onComposing = { topBar -> appBarState.value = topBar }
+                                )
+                            }
+                            composable(favoriteItem.title) {
+                                FavoritesScreen(
+                                    contentPadding = innerPadding,
+                                    onComposing = { topBar -> appBarState.value = topBar }
+                                )
+                            }
+                            composable("search") {
+                                SearchScreen(
+                                    contentPadding = innerPadding,
+                                    onComposing = { topBar -> appBarState.value = topBar }
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
-
-    override fun onPause(){
-        super.onPause()
-        Log.d("LifeCycle", "MainActivity onPause")
-    }
-
-    override fun onResume(){
-        super.onResume()
-        Log.d("LifeCycle", "MainActivity onResume")
-    }
-
-    override fun onStop(){
-        super.onStop()
-        Log.d("LifeCycle", "MainActivity onStop")
-    }
-
-    override fun onStart(){
-        super.onStart()
-        Log.d("LifeCycle", "MainActivity onStart")
-    }
-
-    override fun onRestart(){
-        super.onRestart()
-        Log.d("LifeCycle", "MainActivity onRestart")
     }
 }
